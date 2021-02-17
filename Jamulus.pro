@@ -29,6 +29,12 @@ QT += network \
     xml \
     concurrent
 
+contains(CONFIG, "gamelift") {
+    message(Gamelift mode activated.)
+    CONFIG += headless nosound
+    LIBS += libs/gamelift-server-sdk/lib/libaws-cpp-sdk-gamelift-server
+}
+
 contains(CONFIG, "headless") {
     message(Headless mode activated.)
     QT -= gui
@@ -48,7 +54,8 @@ TRANSLATIONS = src/res/translation/translation_de_DE.ts \
     src/res/translation/translation_it_IT.ts \
     src/res/translation/translation_sv_SE.ts
 
-INCLUDEPATH += src
+INCLUDEPATH += src \
+            libs/game-lift-server-sdk/include
 
 INCLUDEPATH_OPUS = libs/opus/include \
     libs/opus/celt \
@@ -1042,6 +1049,10 @@ DISTFILES_OPUS += libs/opus/AUTHORS \
     libs/opus/README \
     libs/opus/celt/arm/armopts.s.in \
     libs/opus/celt/arm/celt_pitch_xcorr_arm.s \
+
+contains(CONFIG, "gamelift") {
+    DEFINES += WITH_GAMELIFT
+} 
 
 contains(CONFIG, "headless") {
     DEFINES += HEADLESS

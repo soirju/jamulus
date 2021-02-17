@@ -41,38 +41,69 @@
 # include "mac/activity.h"
 #endif
 
-
 // Implementation **************************************************************
 
 int main ( int argc, char** argv )
 {
-
-    QString        strArgument;
-    double         rDbleArgument;
     QList<QString> CommandLineOptions;
 
     // initialize all flags and string which might be changed by command line
     // arguments
-#if defined( SERVER_BUNDLE ) && ( defined( Q_OS_MACX ) )
-    // if we are on MacOS and we are building a server bundle, starts Jamulus in server mode
+
+#if defined( WITH_GAMELIFT )
     bool         bIsClient                   = false;
+    QString      strRecordingDirName         = GAMELIFT_RECORDINGS_DIR;
+    bool         bDisableRecording           = true;
+    int          iNumServerChannels          = MAX_NUM_CHANNELS;
+    QString      strWelcomeMessage           = GAMELIFT_WELCOME_MESSAGE;
+    bool         bUseMultithreading          = true;
+    bool         bDisconnectAllClientsOnQuit = true;
+    QString      strServerInfo               = GAMELIFT_SERVER_INFO;
+
+    qWarning() << "Compiled in GameLift mode, all command line options disabled.";
+    qInfo() << "- server mode chosen";
+    qInfo() << "- no GUI mode chosen";
+    qInfo() << qUtf8Printable( QString("- maximum number of channels: %1")
+        .arg( MAX_NUM_CHANNELS ) );
+    qInfo() << qUtf8Printable( QString("- recording directory name: %1" )
+        .arg( GAMELIFT_RECORDINGS_DIR ) );
+    qInfo() << "- recording will not be enabled";
+    qInfo() << qUtf8Printable( QString( "- server info: %1" )
+        .arg( GAMELIFT_SERVER_INFO ) );
+    qInfo() << "- using multithreading";
+    qInfo() << "- disconnect all clients on quit";
+    qInfo() << qUtf8Printable( QString( "- welcome message: %1" )
+        .arg( GAMELIFT_WELCOME_MESSAGE ) );
+
+
 #else
-    bool         bIsClient                   = true;
+    QString        strArgument;
+    double         rDbleArgument;
+
+    #if defined( SERVER_BUNDLE ) && ( defined( Q_OS_MACX ) ) || ( defined ( WITH_GAMELIFT ))
+        // if we are on MacOS and we are building a server bundle, starts Jamulus in server mode
+        bool         bIsClient                   = false;
+    #else
+        bool         bIsClient                   = true;
+    #endif
+    QString      strRecordingDirName         = "";
+    bool         bDisableRecording           = false;
+    int          iNumServerChannels          = DEFAULT_USED_NUM_CHANNELS;
+    QString      strWelcomeMessage           = "";
+    bool         bUseMultithreading          = false;
+    bool         bDisconnectAllClientsOnQuit = false;
+    QString      strServerInfo               = "";
 #endif
     bool         bUseGUI                     = true;
     bool         bStartMinimized             = false;
     bool         bShowComplRegConnList       = false;
-    bool         bDisconnectAllClientsOnQuit = false;
     bool         bUseDoubleSystemFrameSize   = true; // default is 128 samples frame size
-    bool         bUseMultithreading          = false;
     bool         bShowAnalyzerConsole        = false;
     bool         bMuteStream                 = false;
     bool         bMuteMeInPersonalMix        = false;
-    bool         bDisableRecording           = false;
     bool         bNoAutoJackConnect          = false;
     bool         bUseTranslation             = true;
     bool         bCustomPortNumberGiven      = false;
-    int          iNumServerChannels          = DEFAULT_USED_NUM_CHANNELS;
     quint16      iPortNumber                 = DEFAULT_PORT_NUMBER;
     ELicenceType eLicenceType                = LT_NO_LICENCE;
     QString      strMIDISetup                = "";
@@ -80,13 +111,11 @@ int main ( int argc, char** argv )
     QString      strIniFileName              = "";
     QString      strHTMLStatusFileName       = "";
     QString      strLoggingFileName          = "";
-    QString      strRecordingDirName         = "";
     QString      strCentralServer            = "";
-    QString      strServerInfo               = "";
     QString      strServerPublicIP           = "";
     QString      strServerListFilter         = "";
-    QString      strWelcomeMessage           = "";
     QString      strClientName               = "";
+
 
 #if !defined(HEADLESS) && defined(_WIN32)
     if (AttachConsole(ATTACH_PARENT_PROCESS)) {
@@ -98,6 +127,7 @@ int main ( int argc, char** argv )
     // QT docu: argv()[0] is the program name, argv()[1] is the first
     // argument and argv()[argc()-1] is the last argument.
     // Start with first argument, therefore "i = 1"
+#if !defined ( WITH_GAMELIFT) 
     for ( int i = 1; i < argc; i++ )
     {
         // Server mode flag ----------------------------------------------------
@@ -549,6 +579,7 @@ int main ( int argc, char** argv )
 #endif
     }
 
+#endif
 
     // Dependencies ------------------------------------------------------------
 #ifdef HEADLESS
@@ -649,7 +680,6 @@ int main ( int argc, char** argv )
 
 // TEST -> activate the following line to activate the test bench,
 //CTestbench Testbench ( "127.0.0.1", DEFAULT_PORT_NUMBER );
-
 
     try
     {
@@ -793,7 +823,6 @@ int main ( int argc, char** argv )
 
     return 0;
 }
-
 
 /******************************************************************************\
 * Command Line Argument Parsing                                                *

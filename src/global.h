@@ -103,6 +103,11 @@ LED bar:      lbr
 #define CENTSERV_GENRE_CLASSICAL_FOLK    "classical.jamulus.io:22524"
 #define CENTSERV_GENRE_CHORAL            "choral.jamulus.io:22724"
 
+// settings for AWS GameLift deployments
+#define GAMELIFT_RECORDINGS_DIR         "/home/gamelift/recordings"
+#define GAMELIFT_WELCOME_MESSAGE        "/home/gamelift/welcome.html"
+#define GAMELIFT_SERVER_INFO            "Gamelift;Frankfurt;de"
+
 // getting started and software manual URL
 #define CLIENT_GETTING_STARTED_URL       "https://jamulus.io/wiki/Getting-Started"
 #define SERVER_GETTING_STARTED_URL       "https://jamulus.io/wiki/Running-a-Server"
