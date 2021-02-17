@@ -54,8 +54,7 @@ TRANSLATIONS = src/res/translation/translation_de_DE.ts \
     src/res/translation/translation_it_IT.ts \
     src/res/translation/translation_sv_SE.ts
 
-INCLUDEPATH += src \
-            libs/game-lift-server-sdk/include
+INCLUDEPATH += src 
 
 INCLUDEPATH_OPUS = libs/opus/include \
     libs/opus/celt \
@@ -1052,6 +1051,10 @@ DISTFILES_OPUS += libs/opus/AUTHORS \
 
 contains(CONFIG, "gamelift") {
     DEFINES += WITH_GAMELIFT
+    HEADERS += src/gameliftserver.h 
+    SOURCES += src/gameliftserver.cpp
+    INCLUDEPATH += libs/gamelift-server-sdk/include
+
 } 
 
 contains(CONFIG, "headless") {

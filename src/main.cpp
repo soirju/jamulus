@@ -738,6 +738,23 @@ int main ( int argc, char** argv )
         {
             // Server:
             // actual server object
+#if defined( WITH_GAMELIFT )
+            GameliftServer Server ( iNumServerChannels,
+                             strLoggingFileName,
+                             iPortNumber,
+                             strHTMLStatusFileName,
+                             strCentralServer,
+                             strServerInfo,
+                             strServerPublicIP,
+                             strServerListFilter,
+                             strWelcomeMessage,
+                             strRecordingDirName,
+                             bDisconnectAllClientsOnQuit,
+                             bUseDoubleSystemFrameSize,
+                             bUseMultithreading,
+                             bDisableRecording,
+                             eLicenceType );
+#else            
             CServer Server ( iNumServerChannels,
                              strLoggingFileName,
                              iPortNumber,
@@ -753,6 +770,7 @@ int main ( int argc, char** argv )
                              bUseMultithreading,
                              bDisableRecording,
                              eLicenceType );
+#endif
 
 #ifndef HEADLESS
             if ( bUseGUI )

@@ -34,6 +34,9 @@
 #include "global.h"
 #include "client.h"
 #include "server.h"
+#if defined ( WITH_GAMELIFT )
+    #include "gameliftserver.h"
+#endif
 #include "util.h"
 
 

@@ -41,6 +41,9 @@
 // so we get a cyclic dependency. To solve this issue, a prototype of the
 // channel class and server class is defined here.
 class CServer;  // forward declaration of CServer
+#if defined ( WITH_GAMELIFT )
+    class GameliftServer;
+#endif
 class CChannel; // forward declaration of CChannel
 
 
