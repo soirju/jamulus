@@ -1,0 +1,11 @@
+prefix=/home/ec2-user/jamulus-server-gamelift/GameLift_12_22_2020/GameLift-SDK-Release-4.0.2/GameLift-Cpp-ServerSDK-3.4.1/out/prefix
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Protocol Buffers
+Description: Google's Data Interchange Format
+Version: 3.3.0
+Libs: -L${libdir} -lprotobuf-lite -pthread  -lpthread
+Cflags: -I${includedir} -pthread
+Conflicts: protobuf
