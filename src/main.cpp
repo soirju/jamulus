@@ -59,6 +59,7 @@ int main ( int argc, char** argv )
     bool         bUseMultithreading          = true;
     bool         bDisconnectAllClientsOnQuit = true;
     QString      strServerInfo               = GAMELIFT_SERVER_INFO;
+    bool         bUseDoubleSystemFrameSize   = false; // default is 128 samples frame size
 
     qWarning() << "Compiled in GameLift mode, all command line options disabled.";
     qInfo() << "- server mode chosen";
@@ -74,6 +75,8 @@ int main ( int argc, char** argv )
     qInfo() << "- disconnect all clients on quit";
     qInfo() << qUtf8Printable( QString( "- welcome message: %1" )
         .arg( GAMELIFT_WELCOME_MESSAGE ) );
+    qInfo() << qUtf8Printable( QString( "- using %1 samples frame size mode" )
+        .arg( SYSTEM_FRAME_SIZE_SAMPLES ) );
 
 
 #else
@@ -93,11 +96,11 @@ int main ( int argc, char** argv )
     bool         bUseMultithreading          = false;
     bool         bDisconnectAllClientsOnQuit = false;
     QString      strServerInfo               = "";
+    bool         bUseDoubleSystemFrameSize   = true; // default is 128 samples frame size
 #endif
     bool         bUseGUI                     = true;
     bool         bStartMinimized             = false;
     bool         bShowComplRegConnList       = false;
-    bool         bUseDoubleSystemFrameSize   = true; // default is 128 samples frame size
     bool         bShowAnalyzerConsole        = false;
     bool         bMuteStream                 = false;
     bool         bMuteMeInPersonalMix        = false;
