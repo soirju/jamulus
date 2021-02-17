@@ -32,7 +32,7 @@ QT += network \
 contains(CONFIG, "gamelift") {
     message(Gamelift mode activated.)
     CONFIG += headless nosound
-    LIBS += libs/gamelift-server-sdk/lib/libaws-cpp-sdk-gamelift-server
+    LIBS += libs/gamelift-server-sdk/lib/libaws-cpp-sdk-gamelift-server.so
 }
 
 contains(CONFIG, "headless") {
