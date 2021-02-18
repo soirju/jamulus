@@ -32,7 +32,14 @@ QT += network \
 contains(CONFIG, "gamelift") {
     message(Gamelift mode activated.)
     CONFIG += headless nosound
-    LIBS += libs/gamelift-server-sdk/lib/libaws-cpp-sdk-gamelift-server.so
+    LIBS += libs/gamelift-server-sdk/lib/libaws-cpp-sdk-gamelift-server.a \
+            libs/gamelift-server-sdk/lib/libsioclient.a \
+            libs/gamelift-server-sdk/lib/libboost_random.a \
+            libs/gamelift-server-sdk/lib/libprotobuf-lite.a \
+            libs/gamelift-server-sdk/lib/libprotoc.a \
+            libs/gamelift-server-sdk/lib/libboost_date_time.a \
+            libs/gamelift-server-sdk/lib/libboost_system.a \
+            libs/gamelift-server-sdk/lib/libprotobuf.a \
 }
 
 contains(CONFIG, "headless") {
@@ -1050,7 +1057,8 @@ DISTFILES_OPUS += libs/opus/AUTHORS \
     libs/opus/celt/arm/celt_pitch_xcorr_arm.s \
 
 contains(CONFIG, "gamelift") {
-    DEFINES += WITH_GAMELIFT
+    DEFINES += WITH_GAMELIFT \
+                GAMELIFT_USE_STD=1 
     HEADERS += src/gameliftserver.h 
     SOURCES += src/gameliftserver.cpp
     INCLUDEPATH += libs/gamelift-server-sdk/include

@@ -22,27 +22,36 @@
  *
 \******************************************************************************/
 
+// Wrapper class for CServer
+
 #pragma once
 #include "server.h"
+#include "aws/gamelift/server/GameLiftServerAPI.h"
 
 class GameliftServer : public CServer
 {
+    Q_OBJECT
 public:
-    GameliftServer ( const int          iNewMaxNumChan,
-              const QString&     strLoggingFileName,
-              const quint16      iPortNumber,
-              const QString&     strHTMLStatusFileName,
-              const QString&     strCentralServer,
-              const QString&     strServerInfo,
-              const QString&     strServerListFilter,
-              const QString&     strServerPublicIP,
-              const QString&     strNewWelcomeMessage,
-              const QString&     strRecordingDirName,
-              const bool         bNDisconnectAllClientsOnQuit,
-              const bool         bNUseDoubleSystemFrameSize,
-              const bool         bNUseMultithreading,
-              const bool         bDisableRecording,
-              const ELicenceType eNLicenceType );
+    GameliftServer(const int          iNewMaxNumChan,
+                   const QString&     strLoggingFileName,
+                   const quint16      iPortNumber,
+                   const QString&     strHTMLStatusFileName,
+                   const QString&     strCentralServer,
+                   const QString&     strServerInfo,
+                   const QString&     strServerListFilter,
+                   const QString&     strServerPublicIP,
+                   const QString&     strNewWelcomeMessage,
+                   const QString&     strRecordingDirName,
+                   const bool         bNDisconnectAllClientsOnQuit,
+                   const bool         bNUseDoubleSystemFrameSize,
+                   const bool         bNUseMultithreading,
+                   const bool         bDisableRecording,
+                   const ELicenceType eNLicenceType );
+    ~GameliftServer();
+    void onStartGameSession(Aws::GameLift::Server::Model::GameSession);
+    void onProcessTerminate();
+    bool onHealthCheck();
 
-    virtual ~GameliftServer();
+
 };
+

@@ -25,8 +25,8 @@
 //Let's run this code only if GAMELIFT is enabled. Only with Server targets!
 #if WITH_GAMELIFT
 
+#include<chrono>
 #include "gameliftserver.h"
-#include "aws/gamelift/server/GameLiftServerAPI.h"
 
 GameliftServer::GameliftServer(const int          iNewMaxNumChan,
                    const QString&     strLoggingFileName,
@@ -42,36 +42,77 @@ GameliftServer::GameliftServer(const int          iNewMaxNumChan,
                    const bool         bNUseDoubleSystemFrameSize,
                    const bool         bNUseMultithreading,
                    const bool         bDisableRecording,
-                   const ELicenceType eNLicenceType )
+                   const ELicenceType eNLicenceType ) : CServer(
+                        iNewMaxNumChan,
+                        strLoggingFileName,
+                        iPortNumber,
+                        strHTMLStatusFileName,
+                        strCentralServer,
+                        strServerInfo,
+                        strServerListFilter,
+                        strServerPublicIP,
+                        strNewWelcomeMessage,
+                        strRecordingDirName,
+                        bNDisconnectAllClientsOnQuit,
+                        bNUseDoubleSystemFrameSize,
+                        bNUseMultithreading,
+                        bDisableRecording,
+                        eNLicenceType )
 {
-    // Initailize Gamelift SDK
-    Aws::GameLift::Server::InitSDKOutcome initOutcome = 
-            Aws::GameLift::Server::InitSDK(); 
+    // Called after CServer constructor is executed
+    // Initailize Gamelift SDK - timeout of 3 seconds for server connection
+    qDebug() << "Initialize Gamelift SDK";
+    auto outcome = Aws::GameLift::Server::InitSDK();
+    qInfo() << "Initialization succeeded";
 
-    // initialize jamulus server
-    CServer::CServer(    iNewMaxNumChan,
-            strLoggingFileName,
-            iPortNumber,
-            strHTMLStatusFileName,
-            strCentralServer,
-            strServerInfo,
-            strServerListFilter,
-            strServerPublicIP,
-            strNewWelcomeMessage,
-            strRecordingDirName,
-            bNDisconnectAllClientsOnQuit,
-            bNUseDoubleSystemFrameSize,
-            bNUseMultithreading,
-            bDisableRecording,
-            eNLicenceType );
+    qDebug() << "Start Process Ready procedure";
+    std::string serverLog("serverOut.log");        // Example of a log file written by the game server
+    std::vector<std::string> logPaths;
+    logPaths.push_back(serverLog);
+
+    int listenPort = 22124;
+
+    Aws::GameLift::Server::ProcessParameters processReadyParameter = Aws::GameLift::Server::ProcessParameters(
+        std::bind(&GameliftServer::onStartGameSession, this, std::placeholders::_1),
+        std::bind(&GameliftServer::onProcessTerminate, this),
+        std::bind(&GameliftServer::onHealthCheck, this),
+        listenPort,
+        Aws::GameLift::Server::LogParameters(logPaths)); 
+
+    auto outcome2 =  Aws::GameLift::Server::ProcessReady(processReadyParameter);
 
 
 }
 
-GameliftServer::~GameLiftServer() 
+GameliftServer::~GameliftServer() 
 {
-    CServer::~CServer();
+    qInfo() << "Terminate Gamelift";
+    // stop gamelift server
+    auto outcome = Aws::GameLift::Server::ProcessEnding();
 }
+
+// Implement callback functions
+void GameliftServer::onStartGameSession(Aws::GameLift::Server::Model::GameSession myGameSession)
+{
+// game-specific tasks when starting a new game session, such as loading map
+auto outcome = Aws::GameLift::Server::ActivateGameSession ();
+}
+
+void GameliftServer::onProcessTerminate()
+{
+// game-specific tasks required to gracefully shut down a game session, 
+// such as notifying players, preserving game state data, and other cleanup
+delete this;
+}
+
+bool GameliftServer::onHealthCheck()
+{
+    bool health;
+    // complete health evaluation within 60 seconds and set health
+    health=true;
+    return health;
+}
+
 
 
 #endif

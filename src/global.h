@@ -104,8 +104,8 @@ LED bar:      lbr
 #define CENTSERV_GENRE_CHORAL            "choral.jamulus.io:22724"
 
 // settings for AWS GameLift deployments
-#define GAMELIFT_RECORDINGS_DIR         "/home/gamelift/recordings"
-#define GAMELIFT_WELCOME_MESSAGE        "/home/gamelift/welcome.html"
+#define GAMELIFT_RECORDINGS_DIR         "/local/game/recordings"
+#define GAMELIFT_WELCOME_MESSAGE        "/local/game/welcome.html"
 #define GAMELIFT_SERVER_INFO            "Gamelift;Frankfurt;de"
 
 // getting started and software manual URL
