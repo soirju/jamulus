@@ -94,8 +94,13 @@ GameliftServer::~GameliftServer()
 // Implement callback functions
 void GameliftServer::onStartGameSession(Aws::GameLift::Server::Model::GameSession myGameSession)
 {
+    std::string sessiondata = myGameSession.GetGameSessionData();
+
+    qDebug() << QString::fromStdString( "Session Data: " + myGameSession.GetGameSessionData() );
+    qDebug() << QString::fromStdString( "Session Is: " + myGameSession.GetGameSessionId() );
+    qDebug() << QString::fromStdString( "IP Address: " + myGameSession.GetIpAddress() );
 // game-specific tasks when starting a new game session, such as loading map
-auto outcome = Aws::GameLift::Server::ActivateGameSession ();
+    auto outcome = Aws::GameLift::Server::ActivateGameSession ();
 }
 
 void GameliftServer::onProcessTerminate()
