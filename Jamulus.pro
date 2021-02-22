@@ -39,7 +39,7 @@ contains(CONFIG, "gamelift") {
             libs/gamelift-server-sdk/lib/libprotoc.a \
             libs/gamelift-server-sdk/lib/libboost_date_time.a \
             libs/gamelift-server-sdk/lib/libboost_system.a \
-            libs/gamelift-server-sdk/lib/libprotobuf.a \
+            libs/gamelift-server-sdk/lib/libprotobuf.a 
 }
 
 contains(CONFIG, "headless") {
@@ -340,7 +340,7 @@ win32 {
     # libs. Most g++ versions already do that by default.
     # However, Debian buster does not and would link against libQt5Concurrent
     # unnecessarily without this workaround (#741):
-    QMAKE_LFLAGS += -Wl,--as-needed
+    QMAKE_LFLAGS += -Wl,--as-needed,-rpath,\'\$$ORIGIN\'
 
     HEADERS += linux/sound.h
     SOURCES += linux/sound.cpp
