@@ -594,6 +594,11 @@ void CServer::OnNewConnection ( int          iChID,
     // must be the first message to be sent for a new connection)
     vecChannels[iChID].CreateClientIDMes ( iChID );
 
+    // Send an empty channel list in order to force clients to reset their
+    // audio mixer state. This is required to trigger clients to re-send their
+    // gain levels upon reconnecting after server restarts.
+    vecChannels[iChID].CreateConClientListMes ( CVector<CChannelInfo> (0) );
+
     // query support for split messages in the client
     vecChannels[iChID].CreateReqSplitMessSupportMes();
 
@@ -1394,7 +1399,7 @@ void CServer::CreateAndSendChatTextForAllConChannels ( const int      iCurChanID
     QString sCurColor = vstrChatColors[iCurChanID % vstrChatColors.Size()];
 
     const QString strActualMessageText =
-        "<font color=""" + sCurColor + """>(" +
+        "<font color=\"" + sCurColor + "\">(" +
         QTime::currentTime().toString ( "hh:mm:ss AP" ) + ") <b>" +
         ChanName.toHtmlEscaped() +
         "</b></font> " + strChatText.toHtmlEscaped();

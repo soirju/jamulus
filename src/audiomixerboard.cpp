@@ -413,10 +413,10 @@ void CChannelFader::SetFaderLevel ( const double dLevel,
         // server about the change (block the signal of the fader since we want to
         // call SendFaderLevelToServer with a special additional parameter)
         pFader->blockSignals ( true );
-        pFader->setValue     ( min ( AUD_MIX_FADER_MAX, MathUtils::round ( dLevel ) ) );
+        pFader->setValue     ( std::min ( AUD_MIX_FADER_MAX, MathUtils::round ( dLevel ) ) );
         pFader->blockSignals ( false );
 
-        SendFaderLevelToServer ( min ( static_cast<double> ( AUD_MIX_FADER_MAX ), dLevel ), bIsGroupUpdate );
+        SendFaderLevelToServer ( std::min ( static_cast<double> ( AUD_MIX_FADER_MAX ), dLevel ), bIsGroupUpdate );
 
         if ( dLevel > AUD_MIX_FADER_MAX )
         {
@@ -458,7 +458,7 @@ void CChannelFader::SetRemoteFaderIsMute ( const bool bIsMute )
     if ( bIsMute )
     {
         // show orange utf8 SPEAKER WITH CANCELLATION STROKE (U+1F507)
-        pInfoLabel->setText ( "<font color=""orange"">&#128263;</font>" );
+        pInfoLabel->setText ( "<font color=\"orange\">&#128263;</font>" );
     }
     else
     {
@@ -995,6 +995,9 @@ void CAudioMixerBoard::HideAll()
     // use original order of channel (by server ID)
     ChangeFaderOrder ( ST_NO_SORT );
 
+    // Reset recording indication styleSheet
+    setStyleSheet( "" );
+
     // emit status of connected clients
     emit NumClientsChanged ( 0 ); // -> no clients connected
 }
@@ -1099,6 +1102,11 @@ void CAudioMixerBoard::UpdateTitle()
     if ( eRecorderState == RS_RECORDING )
     {
         strTitlePrefix = "[" + tr ( "RECORDING ACTIVE" ) + "] ";
+        setStyleSheet ( AM_RECORDING_STYLE );
+    }
+    else
+    {
+        setStyleSheet ( "" );
     }
 
     setTitle ( strTitlePrefix + tr ( "Personal Mix at: " ) + strServerName );
@@ -1242,6 +1250,47 @@ void CAudioMixerBoard::SetFaderLevel ( const int iChannelIdx,
         if ( vecpChanFader[iChannelIdx]->IsVisible() )
         {
             vecpChanFader[iChannelIdx]->SetFaderLevel ( iValue );
+        }
+    }
+}
+
+void CAudioMixerBoard::SetPanValue ( const int iChannelIdx,
+                                     const int iValue )
+{
+    // only apply new pan value if channel index is valid and the panner is visible
+    if ( ( iChannelIdx >= 0 ) && ( iChannelIdx < MAX_NUM_CHANNELS )
+           && bDisplayPans )
+    {
+        if ( vecpChanFader[iChannelIdx]->IsVisible() )
+        {
+            vecpChanFader[iChannelIdx]->SetPanValue ( iValue );
+        }
+    }
+}
+
+void CAudioMixerBoard::SetFaderIsSolo ( const int iChannelIdx,
+                                        const bool bIsSolo )
+{
+    // only apply solo if channel index is valid and the fader is visible
+    if ( ( iChannelIdx >= 0 ) && ( iChannelIdx < MAX_NUM_CHANNELS ) )
+
+    {
+        if ( vecpChanFader[iChannelIdx]->IsVisible() )
+        {
+            vecpChanFader[iChannelIdx]->SetFaderIsSolo ( bIsSolo );
+        }
+    }
+}
+
+void CAudioMixerBoard::SetFaderIsMute ( const int iChannelIdx,
+                                        const bool bIsMute )
+{
+    // only apply mute if channel index is valid and the fader is visible
+    if ( ( iChannelIdx >= 0 ) && ( iChannelIdx < MAX_NUM_CHANNELS ) )
+    {
+        if ( vecpChanFader[iChannelIdx]->IsVisible() )
+        {
+            vecpChanFader[iChannelIdx]->SetFaderIsMute ( bIsMute );
         }
     }
 }

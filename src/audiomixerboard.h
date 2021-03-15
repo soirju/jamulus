@@ -184,6 +184,11 @@ protected:
 template<>
 class CAudioMixerBoardSlots<0> {};
 
+#define AM_RECORDING_STYLE "QGroupBox::title { subcontrol-origin: margin; \
+                           subcontrol-position: left top; \
+                           left: 7px; \
+                           color: rgb(255,255,255); \
+                           background-color: rgb(255,0,0); }"
 
 class CAudioMixerBoard :
     public QGroupBox,
@@ -208,7 +213,16 @@ public:
     void            SetMyChannelID ( const int iChannelIdx ) { iMyChannelID = iChannelIdx; }
 
     void            SetFaderLevel ( const int iChannelIdx,
-                                const int iValue );
+                                    const int iValue );
+
+    void            SetPanValue ( const int iChannelIdx,
+                                  const int iValue );
+
+    void            SetFaderIsSolo ( const int iChannelIdx,
+                                     const bool bIsSolo );
+
+    void            SetFaderIsMute ( const int iChannelIdx,
+                                     const bool bIsMute );
 
     void            SetNumMixerPanelRows ( const int iNNumMixerPanelRows );
     int             GetNumMixerPanelRows() { return iNumMixerPanelRows; }
