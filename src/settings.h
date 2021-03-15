@@ -35,6 +35,9 @@
 #include "client.h"
 #include "server.h"
 #include "util.h"
+#ifdef WITH_API
+    #include "api.h"
+#endif
 
 
 /* Classes ********************************************************************/

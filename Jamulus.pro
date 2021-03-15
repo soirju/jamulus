@@ -320,8 +320,8 @@ win32 {
         SOURCES += $$OBOE_SOURCES
         DISTFILES += $$DISTFILES_OBOE
 } else:unix {
-    # we want to compile with C++11
-    CONFIG += c++11
+    # we want to compile with C++17
+    CONFIG += c++17:
 
     # --as-needed avoids linking the final binary against unnecessary runtime
     # libs. Most g++ versions already do that by default.
@@ -425,6 +425,8 @@ HEADERS_GUI = src/audiomixerboard.h \
     src/analyzerconsole.h \
     src/multicolorled.h
 
+HEADER_API = src/api.h
+
 HEADERS_OPUS = libs/opus/celt/arch.h \
     libs/opus/celt/bands.h \
     libs/opus/celt/celt.h \
@@ -513,6 +515,8 @@ SOURCES += src/buffer.cpp \
     src/recorder/jamrecorder.cpp \
     src/recorder/creaperproject.cpp \
     src/recorder/cwavestream.cpp
+
+SOURCES_API = src/api.cpp
 
 SOURCES_GUI = src/audiomixerboard.cpp \
     src/chatdlg.cpp \
@@ -1050,6 +1054,17 @@ contains(CONFIG, "headless") {
     SOURCES += $$SOURCES_GUI
     FORMS += $$FORMS_GUI
 }
+
+# include API servier only if CONFIG restapi is set
+contains(CONFIG, "restapi") {
+    message(REST API enabled.)
+    HEADERS += $$HEADERS_API
+    SOURCES += $$SOURCES_API
+    DEFINES += WITH_API
+    LIBS += -lpistache
+}
+
+
 
 # use external OPUS library if requested
 contains(CONFIG, "opus_shared_lib") {

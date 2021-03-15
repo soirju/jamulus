@@ -72,8 +72,14 @@ int main ( int argc, char** argv )
     bool         bNoAutoJackConnect          = false;
     bool         bUseTranslation             = true;
     bool         bCustomPortNumberGiven      = false;
+#ifdef WITH_API
+    bool         bStartApi                   = false;
+#endif
     int          iNumServerChannels          = DEFAULT_USED_NUM_CHANNELS;
     quint16      iPortNumber                 = DEFAULT_PORT_NUMBER;
+#ifdef WITH_API
+    quint16      iApiPortNumber              = DEFAULT_PORT_NUMBER-1;
+#endif
     ELicenceType eLicenceType                = LT_NO_LICENCE;
     QString      strMIDISetup                = "";
     QString      strConnOnStartupAddress     = "";
@@ -153,7 +159,6 @@ int main ( int argc, char** argv )
             continue;
         }
 
-
         // Use multithreading --------------------------------------------------
         if ( GetFlagArgument ( argv,
                                i,
@@ -166,6 +171,38 @@ int main ( int argc, char** argv )
             continue;
         }
 
+#ifdef WITH_API
+        // start API --------------------------------------------------
+        if ( GetFlagArgument ( argv,
+                               i,
+                               "-a",
+                               "--api" ) )
+        {
+            bStartApi = true;
+            qInfo() << "- start REST API";
+            CommandLineOptions << "--api";
+            continue;
+        }
+
+        // API port number ------------------------------------------
+        if ( GetNumericArgument ( argc,
+                                  argv,
+                                  i,
+                                  "--apiport",
+                                  "--apiport",
+                                  1,
+                                  65535,
+                                  rDbleArgument ) )
+        {
+            iApiPortNumber = static_cast<int> ( rDbleArgument );
+
+            qInfo() << qUtf8Printable( QString("- API port set to: %1")
+                .arg( iApiPortNumber ) );
+
+            CommandLineOptions << "--apiport";
+            continue;
+        }
+#endif
 
         // Maximum number of channels ------------------------------------------
         if ( GetNumericArgument ( argc,
@@ -705,6 +742,12 @@ int main ( int argc, char** argv )
 
                 // show dialog
                 ClientDlg.show();
+#ifdef WITH_API
+                if ( bStartApi ) {
+                    // start API for Client
+                    CApi Api( &Client, (int) iApiPortNumber );
+                }
+#endif
                 pApp->exec();
             }
             else
@@ -713,8 +756,14 @@ int main ( int argc, char** argv )
                 // only start application without using the GUI
                 qInfo() << qUtf8Printable( GetVersionAndNameStr ( false ) );
 
+#ifdef WITH_API
+                if ( bStartApi ) {
+                    // start API for Client
+                    CApi Api( &Client, (int) iApiPortNumber );
+                }
+#endif
                 pApp->exec();
-            }
+      }
         }
         else
         {
@@ -765,6 +814,12 @@ int main ( int argc, char** argv )
                     ServerDlg.show();
                 }
 
+#ifdef WITH_API
+                if ( bStartApi ) {
+                    // start API for Server
+                    CApi Api( &Server, (int) iApiPortNumber );
+                }
+#endif
                 pApp->exec();
             }
             else
@@ -776,6 +831,12 @@ int main ( int argc, char** argv )
                 // update serverlist
                 Server.UpdateServerList();
 
+#ifdef WITH_API
+                if ( bStartApi ) {
+                    // start API for Server
+                    CApi Api( &Server, (int) iApiPortNumber );
+                }
+#endif
                 pApp->exec();
             }
         }
@@ -826,6 +887,10 @@ QString UsageArguments ( char **argv )
         "  -t, --notranslation   disable translation (use English language)\n"
         "  -v, --version         output version information and exit\n"
         "\nServer only:\n"
+#ifdef WITH_API
+        "  -a, --api             start REST api\n"
+        "      --apiport         port number for api (default " + QString ( DEFAULT_PORT_NUMBER-1 ) + ")\n"
+#endif
         "  -d, --discononquit    disconnect all clients on quit\n"
         "  -e, --centralserver   address of the server list on which to register\n"
         "                        (or 'localhost' to be a server list)\n"
